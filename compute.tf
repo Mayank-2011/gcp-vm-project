@@ -33,6 +33,7 @@ resource "google_compute_instance" "jenkins_agent" {
   machine_type = "e2-micro"
   zone = "us-central1-a"
 
+  allow_stopping_for_update = true
   service_account {
     scopes = ["cloud-platform"]
   }
