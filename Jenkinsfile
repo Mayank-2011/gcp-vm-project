@@ -1,11 +1,10 @@
-
 pipeline {
-   agent any
+   agent {
+      label 'terraform-agent'
+   }
+
    environment {
       TF_IN_AUTOMATION = "true"
-   }
-   tools {
-      terraform "terraform-latest"
    }
 
    stages {
@@ -15,21 +14,19 @@ pipeline {
         }
      }
 
-     stage('Terraform Init') {
+     stage('Terraformt') {
+        agent {
+          docker {
+              image 'hashicorp/terraform:light'
+              reuseNode true
+              args '--entrypoint=""'
+          }
+        }
         steps {
+          sh 'terraform --version'
           sh 'terraform init'
-        }
-     }
-
-     stage('Terraform Plan') {
-        steps {
-           sh 'terraform plan -out=tfplan'
-        }
-     }
-
-     stage('Terraform Apply') {
-        steps {
-           sh 'terraform apply --auto-approve'
+          sh 'terrafrom plan -out=tfplan'
+          sh 'terraform apply --auto-approve'
         }
      }
    }
