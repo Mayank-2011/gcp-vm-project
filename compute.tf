@@ -23,6 +23,11 @@ resource "google_compute_instance" "vm_instance" {
   EOT
 }
 
+data "google_secret_manager_secret_version" "ssh_key" {
+  secret = "jenkins-agent-ssh-pub-key"
+  version = "latest"
+}
+
 resource "google_compute_instance" "jenkins_agent" {
   name = "jenkins-agent-01"
   machine_type = "e2-micro"
@@ -31,6 +36,7 @@ resource "google_compute_instance" "jenkins_agent" {
   boot_disk {
     initialize_params {
       image = "debian-cloud/debian-11"
+      size = 50
     }
   }
 
@@ -38,6 +44,10 @@ resource "google_compute_instance" "jenkins_agent" {
     network = "default"
     access_config {
     }
+  }
+
+  metadata = {
+    ssh-keys = "jenkins:${data.google_secret_manager_secret_version.ssh_key.secret_data}"
   }
 
   metadata_startup_script = <<-EOT
