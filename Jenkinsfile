@@ -14,14 +14,7 @@ pipeline {
         }
      }
 
-     stage('Terraformt') {
-        agent {
-          docker {
-              image 'hashicorp/terraform:light'
-              reuseNode true
-              args '--network=host --entrypoint=""'
-          }
-        }
+     stage('Terraform') {
         steps {
           sh 'terraform --version'
           sh 'terraform init'
