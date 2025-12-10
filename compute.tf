@@ -40,7 +40,7 @@ resource "google_compute_instance" "jenkins_agent" {
     }
   }
 
-  metdata_startup_script = <<-EOT
+  metadata_startup_script = <<-EOT
     #!bin/bash
     apt-get-update
     apt-get install -y fontconfig openjdk-17-jre git curl unzip
