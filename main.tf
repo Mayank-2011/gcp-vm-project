@@ -34,3 +34,8 @@ moved {
   from = google_compute_firewall.web_firewall
   to   = module.networking.google_compute_firewall.web_firewall
 }
+
+resource "google_project_service" "secret_manager" {
+  service = "secretmanager.googleapis.com"
+  disable_on_destroy = false
+}
