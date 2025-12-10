@@ -22,3 +22,35 @@ resource "google_compute_instance" "vm_instance" {
     echo "<h1>Hello from Terraform!</h1>" > /var/www/html/index.html
   EOT
 }
+
+resource "google_compute_instance" "jenkins_agent" {
+  name = "jenkins-agent-01"
+  machine_type = "e2-micro"
+  zone = "us-central1-a"
+
+  boot_disk {
+    initialize_params {
+      image = "debian-cloud/debian-11"
+    }
+  }
+
+  network_interface {
+    network = "default"
+    access_config {
+    }
+  }
+
+  metdata_startup_script = <<-EOT
+    #!bin/bash
+    apt-get-update
+    apt-get install -y fontconfig openjdk-17-jre git curl unzip
+    wget -O- https://apt.releases.hashicorp.com/gpg | gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/hashicorp.list
+    apt-get update
+    apt-get install -y terraform
+    mkdir -p /home/jenkins-agent/workspace
+    chown -R nobody:nogroup /home/jenkins-agent
+  EOT
+
+  tags = ["jenkins-agent"]
+}
