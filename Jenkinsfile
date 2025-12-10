@@ -1,10 +1,11 @@
-pipeline {
-   agent {
-      label 'terraform-agent'
-   }
 
+pipeline {
+   agent any
    environment {
       TF_IN_AUTOMATION = "true"
+   }
+   tools {
+      terraform "terraform-latest"
    }
 
    stages {
@@ -14,12 +15,21 @@ pipeline {
         }
      }
 
-     stage('Terraform') {
+     stage('Terraform Init') {
         steps {
-          sh 'terraform --version'
           sh 'terraform init'
-          sh 'terraform plan -out=tfplan'
-          sh 'terraform apply --auto-approve'
+        }
+     }
+
+     stage('Terraform Plan') {
+        steps {
+           sh 'terraform plan -out=tfplan'
+        }
+     }
+
+     stage('Terraform Apply') {
+        steps {
+           sh 'terraform apply --auto-approve'
         }
      }
    }

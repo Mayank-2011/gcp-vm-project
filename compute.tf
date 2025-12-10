@@ -33,6 +33,10 @@ resource "google_compute_instance" "jenkins_agent" {
   machine_type = "e2-micro"
   zone = "us-central1-a"
 
+  service_account {
+    scopes = ["cloud-platform"]
+  }
+
   boot_disk {
     initialize_params {
       image = "debian-cloud/debian-11"
