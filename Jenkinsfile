@@ -19,7 +19,7 @@ pipeline {
           docker {
               image 'hashicorp/terraform:light'
               reuseNode true
-              args '--entrypoint=""'
+              args '--network=host --entrypoint=""'
           }
         }
         steps {
